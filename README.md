@@ -20,6 +20,8 @@
     }
     button {
       margin-left: 10px;
+      padding: 5px 10px;
+      cursor: pointer;
     }
     .keranjang {
       background: white;
@@ -27,6 +29,13 @@
       padding: 15px;
       border-radius: 10px;
       margin-top: 30px;
+    }
+    textarea {
+      width: 100%;
+      height: 60px;
+      margin-top: 10px;
+      border-radius: 5px;
+      padding: 5px;
     }
   </style>
 </head>
@@ -41,14 +50,18 @@
     <ul id="cart-list"></ul>
     <p id="total">Total: Rp0</p>
 
-    <label for="payment">Metode Pembayaran: </label>
+    <label for="payment">Metode Pembayaran:</label>
     <select id="payment">
       <option value="Cash">Cash</option>
       <option value="Transfer">Transfer</option>
     </select>
 
-    <div style="margin-top: 10px;">
+    <label for="note" style="display:block; margin-top: 10px;">Catatan Tambahan:</label>
+    <textarea id="note" placeholder="Contoh: Tidak pakai kacang, sambalnya dipisah..."></textarea>
+
+    <div style="margin-top: 15px;">
       <button onclick="checkout()">Pesan via WhatsApp</button>
+      <button onclick="orderGoFood()" style="background-color: gold; color: black;">Pesan via GoFood</button>
     </div>
   </div>
 
@@ -151,13 +164,22 @@
         return;
       }
       const payment = document.getElementById('payment').value;
+      const note = document.getElementById('note').value.trim();
       const pesan = cart.map(
         (item, i) => `${i + 1}. ${item.name} (${item.quantity}x) - Rp${(item.price * item.quantity).toLocaleString()}`
       ).join('%0A');
 
       const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-      const text = `Halo%2C%20saya%20ingin%20pesan%3A%0A${pesan}%0ATotal%3A%20Rp${total.toLocaleString()}%0AMetode%20pembayaran%3A%20${payment}`;
+      let text = `Halo%2C%20saya%20ingin%20pesan%3A%0A${pesan}%0ATotal%3A%20Rp${total.toLocaleString()}%0AMetode%20pembayaran%3A%20${payment}`;
+      if (note) {
+        text += `%0ACatatan%3A%20${encodeURIComponent(note)}`;
+      }
+
       window.open(`https://wa.me/08371253839?text=${text}`);
+    }
+
+    function orderGoFood() {
+      window.open('https://gofood.link/a/PQXft4o', '_blank');
     }
 
     renderMenu();
